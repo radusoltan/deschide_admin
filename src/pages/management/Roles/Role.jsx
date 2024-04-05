@@ -14,7 +14,7 @@ export const Role = ()=>{
     if(isSuccess){
       navigate("/management/roles")
     }
-  }, [isSuccess]);
+  }, [isSuccess, navigate]);
 
   return <Card title={`Role: ${data?.name}`} loading={isLoading}>
     <Form

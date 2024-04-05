@@ -1,5 +1,5 @@
 import {Button, Card, Form, Input, Select} from "antd";
-import {useGetRoleQuery, useGetRolesQuery, useGetUserQuery, useUpdateUserMutation} from "../../../services/users";
+import { useGetRolesQuery, useGetUserQuery, useUpdateUserMutation} from "../../../services/users";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
 
@@ -17,7 +17,7 @@ export const User = () => {
     if(isSuccess){
       navigate('/management/users')
     }
-  }, [isSuccess]);
+  }, [isSuccess, navigate]);
 
   return <Card title={'User: '+ data?.name} loading={isLoading}>
     <Form

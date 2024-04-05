@@ -39,7 +39,7 @@ export const Roles = () => {
 
   return <Card extra={<Space>
     <Button type="success" icon={<FontAwesomeIcon icon={faCirclePlus} />} onClick={()=>setIsNew(true)} />
-  </Space>}>
+  </Space>} loading={isLoading}>
     <Table columns={columns} pagination={false} dataSource={roles} />
     <NewRole
         open={isNew}

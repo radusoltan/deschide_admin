@@ -3,10 +3,10 @@ import axios from "../lib/axios"
 
 export const userLogin = createAsyncThunk(
     "auth/login",
-    async ({email,password}, {rejectWithValue}) => {
+    async ({email,password,remember}, {rejectWithValue}) => {
       try {
 
-        const response = await axios.post('login',{email, password})
+        const response = await axios.post('login',{email, password, remember})
 
         if (response.status === 200){
 
