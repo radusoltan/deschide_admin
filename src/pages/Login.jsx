@@ -11,6 +11,7 @@ export const Login = () => {
   const navigate = useNavigate()
 
   const onFinish = (values) => {
+    // console.log({...values})
     dispatch(userLogin({...values}))
   }
 

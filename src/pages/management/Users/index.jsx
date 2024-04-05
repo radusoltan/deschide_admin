@@ -2,7 +2,6 @@
 import {useDeleteUserMutation, useGetRolesQuery, useGetUsersQuery} from "../../../services/users";
 import {Button, Card, Pagination, Space, Table} from "antd";
 import {useState} from "react";
-import {DeleteFilled} from "@ant-design/icons";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUserMinus, faUserPlus} from "@fortawesome/free-solid-svg-icons";
@@ -34,7 +33,13 @@ export const Users = () => {
       title: "Roles",
       dataIndex: 'roles',
       key: 'roles',
-      render: roles=>roles.map(role=><span key={role.id}>{role.name}</span>)
+      render: roles=>roles.map(role=><span key={role.id} style={{
+        padding: 5,
+        border: "1px solid lightgray",
+        margin: "5px",
+        borderRadius: "5px",
+        background: "lightgray",
+      }}>{role.name}</span>)
     },
     {
       render: ({key})=> {

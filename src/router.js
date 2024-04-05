@@ -11,6 +11,11 @@ import {Permissions} from "./pages/management/Permissions";
 import {Lists} from "./pages/content/Lists";
 import {User} from "./pages/management/Users/User";
 import {Role} from "./pages/management/Roles/Role";
+import {EditCategory} from "./pages/content/Categories/EditCategory";
+import {TranslateCategory} from "./pages/content/Categories/TranslateCategory";
+import {NewCategory} from "./pages/content/Categories/NewCategory";
+import {CategoryArticles} from "./pages/content/Articles/CategoryArticles";
+import {Article} from "./pages/content/Articles/Article";
 
 export const router = createBrowserRouter([
   {
@@ -26,9 +31,39 @@ export const router = createBrowserRouter([
         element: <Categories />
       },
       {
+        path: '/content/categories/:category',
+        element: <CategoryArticles />
+      },
+      {
+        path: '/content/categories/new',
+        element: <NewCategory />
+      },
+      {
+        path: '/content/categories/:category/edit',
+        element: <EditCategory />
+      },
+      {
+        path: '/content/categories/:category/translate',
+        element: <TranslateCategory />
+      },
+
+
+
+
+
+      {
         path: '/content/Articles',
         element: <Articles />
       },
+      {
+        path: '/content/articles/:article',
+        element: <Article />
+      },
+
+
+
+
+
       {
         path: '/content/authors',
         element: <Authors />
