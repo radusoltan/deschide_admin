@@ -13,7 +13,7 @@ export const articles = createApi({
       }
     }
   }),
-  tagTypes: ["Articles"],
+  tagTypes: ["Articles", "Authors"],
   endpoints: build => ({
     getArticle: build.query({
       query: ({article, locale}) => `/articles/${article}?locale=${locale}`,
@@ -47,7 +47,54 @@ export const articles = createApi({
         {type: "Articles", id: result.data.id},
         { type: "Articles", id: "PARTIAL-LIST" }
       ]
+    }),
+
+    getAuthors: build.query({
+      query: ({page, locale})=>`/authors?page=${page}&locale=${locale}`,
+      providesTags: result => [
+          ...result.data.map(({id})=>({ type: "Authors", id })),
+        { type: "Authors", id: "PARTIAL-LIST" }
+      ]
+    }),
+    getAuthor: build.query({
+      query: ({author, locale}) => `/authors/${author}?locale=${locale}`,
+      providesTags: result => []
+    }),
+    addAuthor: build.mutation({
+      query: ({body, locale}) => ({
+        url: `/authors?locale=${locale}`,
+        method: "POST",
+        body
+      }),
+      invalidatesTags: result => [
+        {type: "Authors", id:result.data.id},
+        { type: "Authors", id: "PARTIAL-LIST" }
+      ]
+    }),
+    updateAuthor: build.mutation({
+      query: ({author, locale, body}) => ({
+        url: `/authors/${author}?locale=${locale}`,
+        method: "PATCH",
+        body
+      }),
+      invalidatesTags: result => [
+        {type: "Authors", id: result.data.id},
+        {type: "Authors", id: "PARTIAL-LIST" }
+      ]
+    }),
+    deleteAuthor: build.mutation({
+      query: author => ({
+        url: `/authors/${author}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: (r,e,id) => [
+        {type: "Authors", id},
+        {type: "Authors", id: "PARTIAL-LIST" }
+      ]
     })
+
+
+
   })
 })
 
@@ -56,4 +103,10 @@ export const {
   useGetCategoryArticlesQuery,
   useAddCategoryArticleMutation,
   useUpdateArticleMutation,
+
+  useGetAuthorsQuery,
+  useGetAuthorQuery,
+  useAddAuthorMutation,
+  useUpdateAuthorMutation,
+  useDeleteAuthorMutation
 } = articles

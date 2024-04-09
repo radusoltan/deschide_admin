@@ -26,6 +26,7 @@ import {
   faFloppyDisk
 } from "@fortawesome/free-solid-svg-icons"
 import {ArticleEditor} from "../../../components/article/Editor"
+import {ArticleImages} from "../../../components/article/ArticleImages";
 
 export const Article = ()=>{
 
@@ -37,12 +38,17 @@ export const Article = ()=>{
   const {data, isLoading, isSuccess} = useGetArticleQuery({article, locale: i18n.language})
   const [updateArticle, {data: articleUpdated, isSuccess: updatedSuccess}] = useUpdateArticleMutation()
 
-  const save = ()=>{
-    updateArticle({article, body: {...articleData}, locale: i18n.language})
+  const save = (saveType)=>{
+    updateArticle({
+      article,
+      body:
+          {...articleData,saveType},
+      locale: i18n.language})
   }
 
   const saveAndClose = ()=>{
-    save()
+
+    save('close')
     setTimeout(()=>navigate(`/content/categories/${articleData.category_id}`), 2000)
   }
 
@@ -67,7 +73,9 @@ export const Article = ()=>{
       <Button
         type="success"
         icon={<FontAwesomeIcon icon={faFloppyDisk} />}
-        onClick={save}
+        onClick={()=>{
+          save('save')
+        }}
       >Save</Button>
       <Button
         type="warning"
@@ -175,6 +183,7 @@ export const Article = ()=>{
             />
           </Space>
         </Card>
+        <ArticleImages article={article} />
       </Col>
     </Row>
   </Card>

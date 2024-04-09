@@ -32,7 +32,7 @@ export const Roles = () => {
     }
   ]
 
-  const roles = data?.data.map(role=>({
+  const roles = data?.map(role=>({
     key: role.id,
     name: role.name,
   }))

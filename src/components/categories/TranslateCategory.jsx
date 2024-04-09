@@ -1,19 +1,20 @@
-import {Button, Card, Form, Input, Switch} from "antd";
+import {Button, Card, Form, Input, Select} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetCategoryQuery, useUpdateCategoryMutation} from "../../../services/categories";
+import {useGetCategoryQuery, useUpdateCategoryMutation} from "../../services/categories";
 import {useEffect, useState} from "react";
-import i18n from "../../../i18n";
+import i18n from "../../i18n";
 
-export const EditCategory = () => {
+export const TranslateCategory = () => {
 
-  const navigate = useNavigate()
-
-  const {category} = useParams()
   const [locale, setLocale] = useState(i18n.language)
 
   i18n.on('languageChanged', locale=>{
     setLocale(locale)
   })
+
+  const navigate = useNavigate()
+
+  const {category} = useParams()
 
   const {data, isLoading} = useGetCategoryQuery({category, locale})
   const [updateCategory, {isSuccess}] = useUpdateCategoryMutation()
@@ -22,21 +23,17 @@ export const EditCategory = () => {
     if (isSuccess) {
       navigate('/content/categories')
     }
-  }, [isSuccess]);
+  },[isSuccess, navigate])
 
-  return <Card title={"Edit category: "+data?.data.title} loading={isLoading}>
+  return <Card title="Translate category" loading={isLoading}>
     <Form
-        layout="vertical"
-        name="new_category_form"
-        initialValues={{
-          title: data?.data.title ?? 'No translation',
-          in_menu: data?.data.in_menu,
-        }}
-        onFinish={values=>{
+        name="translate_category_form"
+        layout='vertical'
+        onFinish={({title, locale})=>{
           updateCategory({
-            body: {...values},
             category,
-            locale: i18n.language,
+            body: {title},
+            locale: locale
           })
         }}
     >
@@ -48,11 +45,20 @@ export const EditCategory = () => {
           ]}
       ><Input /></Form.Item>
       <Form.Item
-          label="In Menu"
-          name="in_menu"
-          valuePropName="checked"
+          name='locale'
+          label="Select Language"
+          rules={[
+            {required: true}
+          ]}
       >
-        <Switch />
+        <Select
+            // defaultValue={i18n.language}
+            options={[
+              {value: 'ro', label: 'Romana'},
+              {value: 'en', label: 'English'},
+              {value: 'ru', label: 'Russian'},
+            ]}
+        />
       </Form.Item>
       <Form.Item
       >

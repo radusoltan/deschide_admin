@@ -18,8 +18,24 @@ export const CategoryArticles = () => {
 
   i18n.on('languageChanged', locale=>setLocale(locale))
 
-  const {data, isLoading} = useGetCategoryArticlesQuery({category, locale, page})
+
   const [addCategoryArticle,{error, isSuccess, data: article}] = useAddCategoryArticleMutation()
+  const {data, isLoading, isSuccess: articlesSuccess} = useGetCategoryArticlesQuery({category, locale, page})
+
+
+  useEffect(() => {
+    if (isSuccess) {
+      form.resetFields()
+      setIsNew(false)
+      navigate(`/content/articles/${article.data.id}`)
+    }
+    if (error){
+      console.log(error)
+      notification.error({
+        message: error.data[2]
+      })
+    }
+  }, [error, isSuccess, articlesSuccess]);
 
   const articles = data?.data.map(article=>({
     key: article.id,
@@ -42,19 +58,6 @@ export const CategoryArticles = () => {
     }
   ]
 
-  useEffect(() => {
-    if (isSuccess) {
-      form.resetFields()
-      setIsNew(false)
-      navigate(`/content/articles/${article.data.id}`)
-    }
-    if (error){
-      notification.error({
-        message: error.data[2]
-      })
-    }
-  }, [error, isSuccess]);
-
   return <Card
       loading={isLoading}
       extra={<Space>
@@ -69,6 +72,7 @@ export const CategoryArticles = () => {
     <Pagination
         total={data?.meta.total}
         defaultCurrent={data?.meta.current_page}
+        onChange={page=>setPage(page)}
     />
     <Modal
         open={isNew}

@@ -1,6 +1,6 @@
-import {Button, Card, Form, Input, Switch} from "antd"
-import {useAddCategoryMutation} from "../../../services/categories"
-import i18n from "../../../i18n"
+import {Button, Card, Form, Input, Switch, InputNumber } from "antd"
+import {useAddCategoryMutation} from "../../services/categories"
+import i18n from "../../i18n"
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 export const NewCategory = () => {
@@ -32,6 +32,9 @@ export const NewCategory = () => {
             {required:true,message: 'Title is required'}
           ]}
       ><Input /></Form.Item>
+      <Form.Item
+          name="old_number"
+      ><InputNumber /></Form.Item>
       <Form.Item
           label="In Menu"
           name="in_menu"
