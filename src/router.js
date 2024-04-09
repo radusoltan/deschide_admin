@@ -11,11 +11,14 @@ import {Permissions} from "./pages/management/Permissions";
 import {Lists} from "./pages/content/Lists";
 import {User} from "./pages/management/Users/User";
 import {Role} from "./pages/management/Roles/Role";
-import {EditCategory} from "./pages/content/Categories/EditCategory";
-import {TranslateCategory} from "./pages/content/Categories/TranslateCategory";
-import {NewCategory} from "./pages/content/Categories/NewCategory";
+import {EditCategory} from "./components/categories/EditCategory";
+import {TranslateCategory} from "./components/categories/TranslateCategory";
+import {NewCategory} from "./components/categories/NewCategory";
 import {CategoryArticles} from "./pages/content/Articles/CategoryArticles";
 import {Article} from "./pages/content/Articles/Article";
+import {NewAuthor} from "./components/authors/NewAuthor";
+import {EditAuthor} from "./components/authors/EditAuthor";
+import {TranslateAuthor} from "./components/authors/TranslateAuthor";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +71,22 @@ export const router = createBrowserRouter([
         path: '/content/authors',
         element: <Authors />
       },
+      {
+        path: '/content/authors/new',
+        element: <NewAuthor />
+      },
+      {
+        path: '/content/authors/:author/edit',
+        element: <EditAuthor />
+      },
+      {
+        path: '/content/authors/:author/translate',
+        element: <TranslateAuthor />
+      },
+
+
+
+
       {
         path: '/content/lists',
         element: <Lists />
