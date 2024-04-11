@@ -1,15 +1,15 @@
 import {Modal, message, Upload} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInbox} from "@fortawesome/free-solid-svg-icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useUploadArticleImagesMutation} from "../../services/images";
 const { Dragger } = Upload;
 
-export const Uploader = ({ open, article }) => {
+export const Uploader = ({ open, article, onOk, onCancel }) => {
 
   const [imageList, setImageList] = useState([])
 
-  const [uploadArticleImages] = useUploadArticleImagesMutation()
+  const [uploadArticleImages, {isSuccess, isLoading}] = useUploadArticleImagesMutation()
 
   const uploadProps = {
     listType: "picture",
@@ -26,13 +26,20 @@ export const Uploader = ({ open, article }) => {
     }
   }
 
+  useEffect(() => {
+    if (isSuccess) {
+      onOk()
+    }
+  }, [isSuccess]);
+
   return <Modal
       open={open}
-      onCancel={()=>{}}
+      onCancel={()=>onCancel}
       onOk={()=>{
         const body = new FormData()
         imageList.forEach(file => body.append('images[]', file))
         uploadArticleImages({article,body})
+
       }}
   >
     <Dragger {...uploadProps}>
