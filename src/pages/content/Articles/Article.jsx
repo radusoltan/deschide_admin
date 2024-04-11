@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  Col,
+  Col, DatePicker,
   Divider,
   Input,
   notification,
@@ -17,16 +17,20 @@ import {
   useParams
 } from "react-router-dom"
 import {
-  useGetArticleQuery,
+  useDeleteArticlePublishTimeMutation,
+  useGetArticleQuery, useSetArticlePublishTimeMutation,
   useUpdateArticleMutation
 } from "../../../services/articles"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {
   faCircleXmark,
-  faFloppyDisk
+  faFloppyDisk, faTrashCan
 } from "@fortawesome/free-solid-svg-icons"
 import {ArticleEditor} from "../../../components/article/Editor"
 import {ArticleImages} from "../../../components/article/ArticleImages";
+import {SubmitEvents} from "../../../components/article/SubmitEvents";
+import moment from "moment";
+import {ArticleAuthors} from "../../../components/article/ArticleAuthors";
 
 export const Article = ()=>{
 
@@ -37,6 +41,8 @@ export const Article = ()=>{
 
   const {data, isLoading, isSuccess} = useGetArticleQuery({article, locale: i18n.language})
   const [updateArticle, {data: articleUpdated, isSuccess: updatedSuccess}] = useUpdateArticleMutation()
+  const [setArticlePublishTime, {isSuccess: setIsSuccess, data: setData}] = useSetArticlePublishTimeMutation()
+  const [deletePublishEvent, {isSuccess: deleteSuccess, data: deleteData}] = useDeleteArticlePublishTimeMutation()
 
   const save = (saveType)=>{
     updateArticle({
@@ -66,6 +72,8 @@ export const Article = ()=>{
       })
     }
   }, [isSuccess, updatedSuccess])
+
+  const date = moment(articleData.publish_at)
 
   return <Card
     loading={isLoading}
@@ -105,6 +113,7 @@ export const Article = ()=>{
         }))
       }}
     />
+    <ArticleAuthors article={article} authors={articleData.authors} />
     <Row>
       <Col span={18}>
         <Card>
@@ -143,6 +152,45 @@ export const Article = ()=>{
             <Select.Option value="S">Submitted</Select.Option>
             <Select.Option value="P">Published</Select.Option>
           </Select>
+          {
+
+              articleData.status === "S" && <Card title="Select publish time" style={{
+                marginTop: 25
+              }}>
+                {articleData.publish_at && <Space direction="vertical">
+                  <div style={{marginBottom: 20}}>
+                    <div style={{ padding: 5, border: '1px solid #e9e9e9' }}>
+                      {date.format('MMM DD YYYY kk:mm')}
+                      <Button
+                          type="primary"
+                          danger
+                          icon={<FontAwesomeIcon icon={faTrashCan} />}
+                          onClick={()=>deletePublishEvent(article)}
+                          style={{
+                            marginLeft: 50
+                          }}
+                      />
+                    </div>
+                  </div>
+                </Space>}
+                <Space direction="vertical">
+                  <DatePicker
+                      showTime
+                      onChange={()=>{
+
+                      }}
+                      onOk={date=>{
+                        setArticlePublishTime({
+                          article,
+                          body: {
+                            time: date.format()
+                          }
+                        })
+                      }}
+                  />
+                </Space>
+              </Card>
+          }
           <Divider />
           <Space direction="vertical">
             <p>FLASH</p>

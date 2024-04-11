@@ -19,6 +19,8 @@ import {Article} from "./pages/content/Articles/Article";
 import {NewAuthor} from "./components/authors/NewAuthor";
 import {EditAuthor} from "./components/authors/EditAuthor";
 import {TranslateAuthor} from "./components/authors/TranslateAuthor";
+import {Cropper} from "./components/images/Cropper";
+import {NewCropper} from "./components/images/NewCropper";
 
 export const router = createBrowserRouter([
   {
@@ -110,11 +112,17 @@ export const router = createBrowserRouter([
       {
         path: '/management/permissions',
         element: <Permissions />
-      }
+      },
+
+
     ]
   },
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/cropper',
+    element: <NewCropper />
   }
 ])

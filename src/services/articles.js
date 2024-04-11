@@ -17,7 +17,10 @@ export const articles = createApi({
   endpoints: build => ({
     getArticle: build.query({
       query: ({article, locale}) => `/articles/${article}?locale=${locale}`,
-      providesTags: result => [{type: "Articles", id: result.id}],
+      providesTags: result => [
+          {type: "Articles", id: result.id},
+        {type: "Articles", id: "PARTIAL-LIST"}
+      ],
     }),
     getCategoryArticles: build.query({
       query: ({page, category, locale})=> `/category/${category}/articles?page=${page}&locale=${locale}`,
@@ -45,6 +48,27 @@ export const articles = createApi({
       }),
       invalidatesTags: result => [
         {type: "Articles", id: result.data.id},
+        { type: "Articles", id: "PARTIAL-LIST" }
+      ]
+    }),
+    setArticlePublishTime: build.mutation({
+      query: ({article, body}) => ({
+        url: `/article/${article}/publish-time`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: result => [
+          { type: "Articles", id: result.data.id},
+        { type: "Articles", id: "PARTIAL-LIST" }
+      ]
+    }),
+    deleteArticlePublishTime: build.mutation({
+      query: article => ({
+        url: `/article/${article}/delete-event`,
+        method: "DELETE"
+      }),
+      invalidatesTags: result => [
+          { type: "Articles", id: result.data.id},
         { type: "Articles", id: "PARTIAL-LIST" }
       ]
     }),
@@ -91,6 +115,17 @@ export const articles = createApi({
         {type: "Authors", id},
         {type: "Authors", id: "PARTIAL-LIST" }
       ]
+    }),
+    getArticleAuthors: build.query({
+      query: (article) => `/article/${article}/authors`,
+      // providesTags: result => console.log(result)
+    }),
+    addArticleAuthor: build.mutation({
+      query: ({article,body}) => ({
+        url: `/article/${article}/add-author`,
+        method: "POST",
+        body: body
+      })
     })
 
 
@@ -103,10 +138,14 @@ export const {
   useGetCategoryArticlesQuery,
   useAddCategoryArticleMutation,
   useUpdateArticleMutation,
+  useSetArticlePublishTimeMutation,
+  useDeleteArticlePublishTimeMutation,
 
   useGetAuthorsQuery,
   useGetAuthorQuery,
   useAddAuthorMutation,
   useUpdateAuthorMutation,
-  useDeleteAuthorMutation
+  useDeleteAuthorMutation,
+  useGetArticleAuthorsQuery,
+  useAddArticleAuthorMutation
 } = articles
