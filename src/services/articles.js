@@ -1,4 +1,5 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import {locale} from "moment";
 
 const baseUrl = process.env.REACT_APP_API_URL
 
@@ -118,18 +119,58 @@ export const articles = createApi({
     }),
     getArticleAuthors: build.query({
       query: (article) => `/article/${article}/authors`,
-      // providesTags: result => console.log(result)
+      providesTags: result => [
+        ...result.data.map(author=>({ type: "Authors", id: author.id })),
+        { type: "Authors", id: "LIST" }
+      ]
+    }),
+    getAllAuthors: build.query({
+      query: (locale)=> `/authors?locale=${locale}`,
+      providesTags: result => [
+          ...result.data.map(author=>({ type: "Authors", id: author.id })),
+        { type: "Authors", id: "LIST" }
+      ]
+    }),
+    searchAuthor: build.mutation({
+      query: ({query, locale}) => ({
+        url: `/authors/search?locale=${locale}`,
+        method: "POST",
+        body: {query}
+      }),
     }),
     addArticleAuthor: build.mutation({
       query: ({article,body}) => ({
         url: `/article/${article}/add-author`,
         method: "POST",
         body: body
-      })
+      }),
+
+      invalidatesTags: result => [
+        {type: "Authors", id: result.data.id},
+          {type: "Authors", id: "LIST" }
+      ]
+    }),
+    selectArticleAuthor: build.mutation({
+      query: ({article,body}) => ({
+        url: `/article/${article}/select-author`,
+        method: "POST",
+        body: body
+      }),
+      invalidatesTags: result => [
+          ...result.data.map(author=>({ type: "Authors", id: author.id })),
+        { type: "Articles", id: "LIST" }
+      ]
+    }),
+    deleteArticleAuthor: build.mutation({
+      query: ({article, author}) => ({
+        url: `/article/${article}/delete-author/${author}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: result => [
+          ...result.data.map(author=>({ type: "Authors", id: author.id })),
+        { type: "Authors", id: "LIST" }
+      ]
     })
-
-
-
   })
 })
 
@@ -147,5 +188,9 @@ export const {
   useUpdateAuthorMutation,
   useDeleteAuthorMutation,
   useGetArticleAuthorsQuery,
-  useAddArticleAuthorMutation
+  useAddArticleAuthorMutation,
+  useDeleteArticleAuthorMutation,
+  useGetAllAuthorsQuery,
+  useSearchAuthorMutation,
+  useSelectArticleAuthorMutation
 } = articles

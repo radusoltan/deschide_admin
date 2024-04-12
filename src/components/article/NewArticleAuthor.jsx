@@ -9,13 +9,18 @@ export const NewArticleAuthor = ({open, onOk, onCancel, article}) => {
       onOk={()=>{
         form.validateFields()
             .then(values=>{
+              form.resetFields()
               addArticleAuthor({
                 article,
                 body: {...values}
               })
             })
+        onOk()
       }}
-      onCancel={()=>{}}
+      onCancel={()=>{
+        form.resetFields()
+        onCancel()
+      }}
   >
     <Form
         form={form}
