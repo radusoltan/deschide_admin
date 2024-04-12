@@ -1,5 +1,6 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {locale} from "moment";
+import {logout} from "../features/authSlice";
 
 const baseUrl = process.env.REACT_APP_API_URL
 
@@ -14,7 +15,7 @@ export const articles = createApi({
       }
     }
   }),
-  tagTypes: ["Articles", "Authors"],
+  tagTypes: ["Articles", "Authors", "Lists"],
   endpoints: build => ({
     getArticle: build.query({
       query: ({article, locale}) => `/articles/${article}?locale=${locale}`,
@@ -22,6 +23,9 @@ export const articles = createApi({
           {type: "Articles", id: result.id},
         {type: "Articles", id: "PARTIAL-LIST"}
       ],
+    }),
+    getArticles: build.query({
+      query: ({page, locale}) => `/articles?page=${page}&locale=${locale}`,
     }),
     getCategoryArticles: build.query({
       query: ({page, category, locale})=> `/category/${category}/articles?page=${page}&locale=${locale}`,
@@ -170,12 +174,80 @@ export const articles = createApi({
           ...result.data.map(author=>({ type: "Authors", id: author.id })),
         { type: "Authors", id: "LIST" }
       ]
+    }),
+
+    getLists: build.query({
+      query: ({locale, page}) => `/lists?locale=${locale}&page=${page}`,
+      providesTags: result => [
+          ...result.data.map(list=>({ type: "Lists", id: list.id })),
+        { type: "Lists", id: "PARTIAL-LIST" }
+      ]
+    }),
+    getList: build.query({
+      query: list => `/lists/${list}`,
+      providesTags: result => [{type: "Lists", id: result.data.id}],
+    }),
+    addList: build.mutation({
+      query: (values) => ({
+        url: `/lists`,
+        method: "POST",
+        body: values
+      }),
+      invalidatesTags: result => [
+        {type: "Lists", id: result.data.id},
+        {type: "Lists", id: "PARTIAL-LIST" }
+      ],
+    }),
+    deleteList: build.mutation({
+      query: list => ({
+        url: `/lists/${list}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: (r,e,id) => [
+          {type: "Lists", id: id},
+          {type: "Lists", id: "PARTIAL-LIST" }
+      ]
+    }),
+    addArticlesToList: build.mutation({
+      query: ({list,ids}) => ({
+        url: `/lists/${list}/add-articles`,
+        method: "POST",
+        body: {ids}
+      }),
+      invalidatesTags: result => [
+        {type: "Lists", id: result.data.id},
+        { type: "Lists", id: "PARTIAL-LIST" }
+      ]
+    }),
+    addArticleToList: build.mutation({
+      query: ({list,article}) => ({
+        url: `/lists/${list}/add-article`,
+        method: "POST",
+        body: {article}
+      }),
+      invalidatesTags: result => [
+        {type: "Lists", id: result.data.id},
+        { type: "Lists", id: "PARTIAL-LIST" }
+      ]
+    }),
+    deleteArticleFromList: build.mutation({
+      query: ({list, article}) => ({
+        url: `/lists/${list}/delete-article`,
+        method: "POST",
+        body: {article}
+      }),
+      invalidatesTags: result => [
+        {type: "Lists", id: result.data.id},
+        { type: "Lists", id: "PARTIAL-LIST" },
+        { type: "Articles", id: "PARTIAL-LIST" }
+      ],
     })
   })
 })
 
 export const {
   useGetArticleQuery,
+  useGetArticlesQuery,
   useGetCategoryArticlesQuery,
   useAddCategoryArticleMutation,
   useUpdateArticleMutation,
@@ -192,5 +264,13 @@ export const {
   useDeleteArticleAuthorMutation,
   useGetAllAuthorsQuery,
   useSearchAuthorMutation,
-  useSelectArticleAuthorMutation
+  useSelectArticleAuthorMutation,
+
+  useGetListsQuery,
+  useGetListQuery,
+  useAddListMutation,
+  useDeleteListMutation,
+  useAddArticlesToListMutation,
+  useAddArticleToListMutation,
+  useDeleteArticleFromListMutation,
 } = articles

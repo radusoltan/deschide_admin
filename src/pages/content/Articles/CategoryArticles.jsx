@@ -73,6 +73,7 @@ export const CategoryArticles = () => {
         total={data?.meta.total}
         defaultCurrent={data?.meta.current_page}
         onChange={page=>setPage(page)}
+        hideOnSinglePage={true}
     />
     <Modal
         open={isNew}
