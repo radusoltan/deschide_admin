@@ -31,6 +31,7 @@ import {ArticleImages} from "../../../components/article/ArticleImages";
 import {SubmitEvents} from "../../../components/article/SubmitEvents";
 import moment from "moment";
 import {ArticleAuthors} from "../../../components/article/ArticleAuthors";
+import {FeaturedLists} from "../../../components/article/FeaturedLists";
 
 export const Article = ()=>{
 
@@ -136,6 +137,7 @@ export const Article = ()=>{
             }}
           />
         </Card>
+        <FeaturedLists article={article} />
       </Col>
       <Col span={6}>
         <Card>

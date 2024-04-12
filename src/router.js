@@ -19,8 +19,7 @@ import {Article} from "./pages/content/Articles/Article";
 import {NewAuthor} from "./components/authors/NewAuthor";
 import {EditAuthor} from "./components/authors/EditAuthor";
 import {TranslateAuthor} from "./components/authors/TranslateAuthor";
-import {Cropper} from "./components/images/Cropper";
-import {NewCropper} from "./components/images/NewCropper";
+import {EditList} from "./components/lists/EditList";
 
 export const router = createBrowserRouter([
   {
@@ -94,6 +93,13 @@ export const router = createBrowserRouter([
         element: <Lists />
       },
       {
+        path: '/content/lists/:list',
+        element: <EditList />
+      },
+
+
+
+      {
         path: '/management/users',
         element: <Users />
       },
@@ -120,9 +126,5 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />
-  },
-  {
-    path: '/cropper',
-    element: <NewCropper />
   }
 ])
