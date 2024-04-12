@@ -1,16 +1,19 @@
 import {Button, Card, List, Space} from "antd";
-import {useGetArticleAuthorsQuery} from "../../services/articles";
+import {useDeleteArticleAuthorMutation, useGetArticleAuthorsQuery} from "../../services/articles";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faList, faTrashCan, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import {useState} from "react";
 import {NewArticleAuthor} from "./NewArticleAuthor";
+import {SelectArticleAuthor} from "./SelectArticleAuthor";
 
 export const ArticleAuthors = ({article, authors})=>{
 
   const {data, isLoading} = useGetArticleAuthorsQuery(article)
   const [isNew, setIsNew] = useState(false)
   const [isSelect, setIsSelect] = useState(false)
-  console.log(data)
+  const [deleteArticleAuthor] = useDeleteArticleAuthorMutation()
+
+
   return <Card
       title="Article authos"
       extra={<Space>
@@ -37,7 +40,12 @@ export const ArticleAuthors = ({article, authors})=>{
                         danger
                         type="primary"
                         icon={<FontAwesomeIcon icon={faTrashCan} />}
-                        onClick={()=>{}}
+                        onClick={()=>{
+                          deleteArticleAuthor({
+                            article,
+                            author: author.id
+                          })
+                        }}
                     />
                 ]}>
               <List.Item.Meta title={author.full_name} />
@@ -46,8 +54,14 @@ export const ArticleAuthors = ({article, authors})=>{
     />
     <NewArticleAuthor
         open={isNew}
-        onOk={()=>{}}
-        onCancel={()=>{}}
+        onOk={()=>setIsNew(false)}
+        onCancel={()=>setIsNew(false)}
+        article={article}
+    />
+    <SelectArticleAuthor
+        open={isSelect}
+        onOk={()=>setIsSelect(false)}
+        onCancel={()=>setIsSelect(false)}
         article={article}
     />
   </Card>
