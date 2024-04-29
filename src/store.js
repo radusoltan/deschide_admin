@@ -6,6 +6,7 @@ import {users} from "./services/users";
 import {categories} from "./services/categories"
 import {articles} from "./services/articles";
 import {images} from "./services/images";
+import {lists} from "./services/articlesList";
 
 export const store = configureStore({
   reducer: {
@@ -14,14 +15,16 @@ export const store = configureStore({
     [articles.reducerPath]: articles.reducer,
     [authApi.reducerPath]: authApi.reducer,
     [users.reducerPath]: users.reducer,
-    [images.reducerPath]: images.reducer
+    [images.reducerPath]: images.reducer,
+    [lists.reducerPath]: lists.reducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat([
       authApi.middleware,
       users.middleware,
       categories.middleware,
       articles.middleware,
-      images.middleware
+      images.middleware,
+      lists.middleware
 
   ])
 

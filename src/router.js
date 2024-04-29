@@ -20,6 +20,8 @@ import {NewAuthor} from "./components/authors/NewAuthor";
 import {EditAuthor} from "./components/authors/EditAuthor";
 import {TranslateAuthor} from "./components/authors/TranslateAuthor";
 import {EditList} from "./components/lists/EditList";
+import {Renditions} from "./pages/settings/Renditions";
+import {EditRendition} from "./components/renditions/EditRendition";
 
 export const router = createBrowserRouter([
   {
@@ -119,6 +121,15 @@ export const router = createBrowserRouter([
         path: '/management/permissions',
         element: <Permissions />
       },
+
+      {
+        path: '/settings/renditions',
+        element: <Renditions />
+      },
+      {
+        path: '/settings/rendition/:rendition',
+        element: <EditRendition />
+      }
 
 
     ]

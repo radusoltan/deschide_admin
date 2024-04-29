@@ -1,10 +1,15 @@
 import {Button, Card, Form, Input, Modal, Pagination, Select, Space, Table, notification} from "antd";
-import {useAddCategoryArticleMutation, useGetCategoryArticlesQuery} from "../../../services/articles";
+import {
+  useAddCategoryArticleMutation,
+  useGetCategoryArticlesQuery,
+  useUnlockArticleMutation
+} from "../../../services/articles";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import i18n from "../../../i18n";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSquarePlus} from "@fortawesome/free-solid-svg-icons";
+import {faLockOpen, faSquarePlus} from "@fortawesome/free-solid-svg-icons";
+import {unlockArticle} from "../../../features/articleSlice";
 
 export const CategoryArticles = () => {
 
@@ -21,7 +26,7 @@ export const CategoryArticles = () => {
 
   const [addCategoryArticle,{error, isSuccess, data: article}] = useAddCategoryArticleMutation()
   const {data, isLoading, isSuccess: articlesSuccess} = useGetCategoryArticlesQuery({category, locale, page})
-
+  // const [unlockArticle] = useUnlockArticleMutation()
 
   useEffect(() => {
     if (isSuccess) {
@@ -41,6 +46,7 @@ export const CategoryArticles = () => {
     key: article.id,
     title: article.title ?? 'No translation',
     status: article.status,
+    is_locked: article.is_locked,
   }))
 
   const columns = [
@@ -48,13 +54,18 @@ export const CategoryArticles = () => {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: (text, {key}) => <Link to={`/content/articles/${key}`}>{text}</Link>
+      render: (text, {key, is_locked}) => {
+
+        return is_locked ? <span>{text}</span> : <Link to={`/content/articles/${key}`}>{text}</Link>
+      }
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (text, {key}) => (text)
+      render: (text, {key, is_locked}) => is_locked ? <Button icon={<FontAwesomeIcon icon={faLockOpen} onClick={()=>{
+        unlockArticle(key)
+      }} />} /> : (text)
     }
   ]
 

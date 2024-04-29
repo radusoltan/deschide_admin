@@ -13,7 +13,7 @@ export const images = createApi({
       }
     }
   }),
-  tagTypes: ["Images", "Thumbnails"],
+  tagTypes: ["Images", "Thumbnails", "Renditions"],
   endpoints: build => ({
     getImagesByArticle: build.query({
       query: article => `/article/${article}/images`,
@@ -55,9 +55,67 @@ export const images = createApi({
         { type: "Images", id: "LIST" },
       ]
     }),
+
     getRenditions: build.query({
-      query: () => 'renditions'
+      query: (page) => `/renditions?page=${page}`,
+      providesTags: result => [
+          ...result.data.map(rendition=>({ type: "Renditions", id: rendition.id })),
+        {type: "Renditions", id: "PARTIAL-LIST" },
+      ]
     }),
+    getRendition: build.query({
+      query: rendition => `/renditions/${rendition}`,
+      providesTags: result => [
+        {type: "Rendition", id: result.data.id},
+        { type: "Renditions", id: "PARTIAL-LIST" },
+      ]
+    }),
+    addRendition: build.mutation({
+      query: body => ({
+        url: '/renditions',
+        method: "POST",
+        body
+      }),
+      invalidatesTags: result => [
+        {type: "Renditions", id: result.data.id},
+        {type: "Renditions", id: "PARTIAL-LIST" },
+      ],
+    }),
+    updateRendition: build.mutation({
+      query: ({rendition, body}) => ({
+        url: `/renditions/${rendition}`,
+        method: "PATCH",
+        body
+      }),
+      invalidatesTags: result => [
+          {type: "Renditions", id: result.data.id},
+          {type: "Renditions", id: "PARTIAL-LIST" },
+      ]
+    }),
+    deleteRendition: build.mutation({
+      query: rendition => ({
+        url: `/renditions/${rendition}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: (result, error, id) => [
+        {type: "Renditions", id},
+        {type: "Renditions", id: "PARTIAL-LIST"},
+      ]
+    }),
+    getAllRenditions: build.query({
+      query: ()=> '/renditions',
+      providesTags: result => [
+        ...result.data.map(rendition=>({ type: "Rendition", id: rendition.id })),
+        {type: "Renditions", id: "LIST"},
+      ]
+    }),
+
+
+
+
+
+
+
     getImageThumbnails: build.query({
       query: image => `/image/${image}/thumbnails`,
       providesTags: result => [
@@ -66,13 +124,14 @@ export const images = createApi({
       ]
     }),
     cropImage: build.mutation({
-      query: ({image,rendition,crop}) => ({
+      query: ({image,rendition,crop, thumbnail}) => ({
         url: `/image/${image}/crop`,
         method: 'POST',
-        body: {rendition, crop}
+        body: {rendition, crop, thumbnail}
       }),
       invalidatesTags: result => [
           [{ type: "Images", id: result.image_id}],
+          [{type: "Thumbnails",id: result.id}],
         { type: "Images", id: "LIST" }
       ]
     }),
@@ -85,7 +144,14 @@ export const {
   useUploadArticleImagesMutation,
   useDetachArticleImageMutation,
   useSetArticleMainImageMutation,
+
   useGetRenditionsQuery,
+  useGetAllRenditionsQuery,
+  useGetRenditionQuery,
+  useAddRenditionMutation,
+  useUpdateRenditionMutation,
+  useDeleteRenditionMutation,
+
   useGetImageThumbnailsQuery,
   useCropImageMutation
 } = images

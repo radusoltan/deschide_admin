@@ -1,240 +1,143 @@
-import {
-  Button,
-  Card,
-  Col, DatePicker,
-  Divider,
-  Input,
-  notification,
-  Row,
-  Select,
-  Space,
-  Switch
-} from "antd"
-import {useEffect, useState} from "react"
-import i18n from "../../../i18n"
-import {
-  useNavigate,
-  useParams
-} from "react-router-dom"
-import {
-  useDeleteArticlePublishTimeMutation,
-  useGetArticleQuery, useSetArticlePublishTimeMutation,
-  useUpdateArticleMutation
-} from "../../../services/articles"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {
-  faCircleXmark,
-  faFloppyDisk, faTrashCan
-} from "@fortawesome/free-solid-svg-icons"
-import {ArticleEditor} from "../../../components/article/Editor"
+import {useParams} from "react-router-dom";
+import {useGetArticleQuery, useUpdateArticleMutation} from "../../../services/articles";
+import i18n from "../../../i18n";
+import {useEffect, useState} from "react";
+import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch, Typography} from "antd";
+import {CKEditor} from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import {ArticleEditor} from "../../../components/article/Editor";
 import {ArticleImages} from "../../../components/article/ArticleImages";
-import {SubmitEvents} from "../../../components/article/SubmitEvents";
-import moment from "moment";
-import {ArticleAuthors} from "../../../components/article/ArticleAuthors";
 import {FeaturedLists} from "../../../components/article/FeaturedLists";
 
 export const Article = ()=>{
-
+  const [form] = Form.useForm();
   const {article} = useParams()
-  const navigate = useNavigate()
+  const {data, isSuccess, isLoading} = useGetArticleQuery({article, locale: i18n.language})
+  const [updateArticle] = useUpdateArticleMutation()
+  const [articleData, setArticleData] = useState()
+  const { Item } = Form;
+  const { TextArea } = Input;
+  const { Title } = Typography;
 
-  const [articleData, setArticleData] = useState({})
 
-  const {data, isLoading, isSuccess} = useGetArticleQuery({article, locale: i18n.language})
-  const [updateArticle, {data: articleUpdated, isSuccess: updatedSuccess}] = useUpdateArticleMutation()
-  const [setArticlePublishTime, {isSuccess: setIsSuccess, data: setData}] = useSetArticlePublishTimeMutation()
-  const [deletePublishEvent, {isSuccess: deleteSuccess, data: deleteData}] = useDeleteArticlePublishTimeMutation()
+  const onFinish = () => {
 
-  const save = (saveType)=>{
-    updateArticle({
-      article,
-      body:
-          {...articleData,saveType},
-      locale: i18n.language})
+    form.validateFields()
+        .then(values=>{
+
+          updateArticle({
+            article,
+            body:
+                {...values},
+            locale: i18n.language})
+
+
+          console.log(values)
+        })
   }
-
-  const saveAndClose = ()=>{
-
-    save('close')
-    setTimeout(()=>navigate(`/content/categories/${articleData.category_id}`), 2000)
-  }
-
-  const close = ()=> navigate(`/content/categories/${articleData.category_id}`)
-
-  useEffect(() => {
-    if (isSuccess){
-      setArticleData(data.data)
-    }
-    if (updatedSuccess){
-      setArticleData(articleUpdated.data)
-      notification.success({
-        message: 'Successfully updated article',
-        duration: 2
-      })
-    }
-  }, [isSuccess, updatedSuccess])
-
-  const date = moment(articleData.publish_at)
 
   return <Card
-    loading={isLoading}
-    extra={<Space>
-      <Button
-        type="success"
-        icon={<FontAwesomeIcon icon={faFloppyDisk} />}
-        onClick={()=>{
-          save('save')
-        }}
-      >Save</Button>
-      <Button
-        type="warning"
-        icon={<Space>
-          <FontAwesomeIcon icon={faFloppyDisk} />
-          <FontAwesomeIcon icon={faCircleXmark} />
-        </Space>}
-        onClick={saveAndClose}
-      >Save & Close</Button>
-      <Button
-        type="primary"
-        danger
-        onClick={close}
-        icon={<FontAwesomeIcon icon={faCircleXmark} />}
-      >Close</Button>
-    </Space>}
+      loading={isLoading}
   >
-    <Input
-      maxLength={200}
-      showCount={true}
-      size="large"
-      value={articleData.title}
-      onChange={e=>{
-        setArticleData(prevState => ({
-          ...prevState,
-          title: e.target.value,
-        }))
+    <Form
+      form={form}
+      onFinish={onFinish}
+      initialValues={{
+        title: data?.data.title,
+        lead: data?.data.lead,
+        body: data?.data.body,
+        status: data?.data.status,
+        is_flash: data?.data.is_flash,
+        is_breaking: data?.data.is_breaking,
+        is_alert: data?.data.is_alert,
       }}
-    />
-    <ArticleAuthors article={article} authors={articleData.authors} />
-    <Row>
-      <Col span={18}>
-        <Card>
-          <ArticleEditor
-            field="lead"
-            initialValue={articleData.lead}
-            onEdit={lead => setArticleData(prevState => ({
-              ...prevState,
-              lead
-            }))}
-          />
-          <Divider />
-          <ArticleEditor
-            initialValue={articleData.body}
-            onEdit={body => {
-              setArticleData(prevState => ({
-                ...prevState,
-                body: body
-              }))
-            }}
-          />
-        </Card>
-        <FeaturedLists article={article} />
-      </Col>
-      <Col span={6}>
-        <Card>
-          <Select
-            onChange={status=>{
-              setArticleData(prevState => ({
-                ...prevState,
-                status
-              }))
-            }}
-            value={articleData.status}
+    >
+      <Space direction="vertical">
+        <Item>
+          <Button htmlType="submit" type="primary">
+            Submit
+          </Button>
+        </Item>
+      </Space>
+      <Item
+          name="title"
+      ><Input
+          maxLength={200}
+          showCount={true}
+          size="large"
+      /></Item>
+      <Row>
+        <Col span={18}>
+          <Item
+              name="lead"
           >
-            <Select.Option value="N">New</Select.Option>
-            <Select.Option value="S">Submitted</Select.Option>
-            <Select.Option value="P">Published</Select.Option>
-          </Select>
-          {
+            <ArticleEditor
+                field={'lead'}
+                images={data?.data.images}
+                onEdit={(data)=>{
+                  form.setFieldsValue({
+                    lead: data,
+                  })
+                }}
+                initialValue={data?.data.lead}
+                field="lead"
+            />
+          </Item>
+          <Divider orientation="vertical" />
+          <Item
+              name="body"
+          >
+            <ArticleEditor
+                field={'body'}
+                images={data?.data.images}
+                onEdit={(data)=>{
+                  form.setFieldsValue({
+                    body: data,
+                  })
+                }}
+                initialValue={data?.data.body}
+            />
+          </Item>
+          <FeaturedLists article={article}/>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Item
+                name="status"
+            >
+              <Select>
+                <Select.Option value="N">New</Select.Option>
+                <Select.Option value="S">Submitted</Select.Option>
+                <Select.Option value="P">Published</Select.Option>
+              </Select>
+            </Item>
+            <Divider />
+            <Item
+                name="is_flash"
+                label="FLASH"
+            >
+              <Switch />
+            </Item>
+            <Item
+                name="is_breaking"
+                label="BREAKING"
+            >
+              <Switch />
+            </Item>
+            <Item
+                name="is_alert"
+                label="ALERT"
+            >
+              <Switch />
+            </Item>
+          </Card>
+          <ArticleImages article={article} />
+        </Col>
+      </Row>
 
-              articleData.status === "S" && <Card title="Select publish time" style={{
-                marginTop: 25
-              }}>
-                {articleData.publish_at && <Space direction="vertical">
-                  <div style={{marginBottom: 20}}>
-                    <div style={{ padding: 5, border: '1px solid #e9e9e9' }}>
-                      {date.format('MMM DD YYYY kk:mm')}
-                      <Button
-                          type="primary"
-                          danger
-                          icon={<FontAwesomeIcon icon={faTrashCan} />}
-                          onClick={()=>deletePublishEvent(article)}
-                          style={{
-                            marginLeft: 50
-                          }}
-                      />
-                    </div>
-                  </div>
-                </Space>}
-                <Space direction="vertical">
-                  <DatePicker
-                      showTime
-                      onChange={()=>{
 
-                      }}
-                      onOk={date=>{
-                        setArticlePublishTime({
-                          article,
-                          body: {
-                            time: date.format()
-                          }
-                        })
-                      }}
-                  />
-                </Space>
-              </Card>
-          }
-          <Divider />
-          <Space direction="vertical">
-            <p>FLASH</p>
-            <Switch
-              onChange={(e) => {
-                setArticleData(prevState => ({
-                  ...prevState,
-                  is_flash: e,
-                  is_breaking: false,
-                  is_alert: false
-                }))
-              }}
-              checked={articleData.is_flash}
-            />
-            <p>ALERT</p>
-            <Switch
-              onChange={(e) => {
-                setArticleData(prevState => ({
-                  ...prevState,
-                  is_flash: false,
-                  is_breaking: false,
-                  is_alert: e
-                }) )
-              }}
-              checked={articleData.is_alert}
-            />
-            <p>BREAKING</p>
-            <Switch
-              onChange={(e) => {
-                setArticleData(prevState => ({
-                  ...prevState,
-                  is_flash: false,
-                  is_breaking: e,
-                  is_alert: false
-                }) )
-              }}
-              checked={articleData.is_breaking}
-            />
-          </Space>
-        </Card>
-        <ArticleImages article={article} />
-      </Col>
-    </Row>
+    </Form>
   </Card>
 }
