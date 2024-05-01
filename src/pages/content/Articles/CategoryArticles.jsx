@@ -1,8 +1,7 @@
-import {Button, Card, Form, Input, Modal, Pagination, Select, Space, Table, notification} from "antd";
+import {Button, Card, Form, Input, Modal, Pagination, Select, Space, Table, notification, AutoComplete} from "antd";
 import {
   useAddCategoryArticleMutation,
-  useGetCategoryArticlesQuery,
-  useUnlockArticleMutation
+  useGetCategoryArticlesQuery, useSearchArticlesMutation
 } from "../../../services/articles";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
@@ -10,6 +9,7 @@ import i18n from "../../../i18n";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLockOpen, faSquarePlus} from "@fortawesome/free-solid-svg-icons";
 import {unlockArticle} from "../../../features/articleSlice";
+import {SearchOutlined} from "@ant-design/icons";
 
 export const CategoryArticles = () => {
 
@@ -18,6 +18,7 @@ export const CategoryArticles = () => {
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [locale, setLocale] = useState(i18n.language)
+  const [searchOptions, setSearchOptions] = useState([])
 
   const [form] = Form.useForm()
 
@@ -26,7 +27,8 @@ export const CategoryArticles = () => {
 
   const [addCategoryArticle,{error, isSuccess, data: article}] = useAddCategoryArticleMutation()
   const {data, isLoading, isSuccess: articlesSuccess} = useGetCategoryArticlesQuery({category, locale, page})
-  // const [unlockArticle] = useUnlockArticleMutation()
+  const [searchArticle,{isSuccess: searchIsSuccess, data: searchResults}] = useSearchArticlesMutation()
+
 
   useEffect(() => {
     if (isSuccess) {
@@ -34,13 +36,30 @@ export const CategoryArticles = () => {
       setIsNew(false)
       navigate(`/content/articles/${article.data.id}`)
     }
+    if (articlesSuccess){
+      const articles = data?.data.map(article=> {
+
+        return {
+          label: article.title,
+          value: String( article.id),
+        }
+      })
+      setSearchOptions(articles)
+    }
     if (error){
       console.log(error)
       notification.error({
         message: error.data[2]
       })
     }
-  }, [error, isSuccess, articlesSuccess]);
+    if (searchIsSuccess) {
+      const articles = searchResults?.data.map(article=>({
+        label: article.title,
+        value: String(article.article_id),
+      }))
+      setSearchOptions(articles)
+    }
+  }, [error, isSuccess, articlesSuccess, searchIsSuccess]);
 
   const articles = data?.data.map(article=>({
     key: article.id,
@@ -69,6 +88,23 @@ export const CategoryArticles = () => {
     }
   ]
 
+  const onSearch = (data) => {
+
+    searchResults?.data.filter(article=>{
+      const translation = article.translations.find(t=>t.locale === i18n.language)
+
+      return {
+        label: translation ? translation.title : '',
+        value: String(article.id)
+      }
+    })
+    // console.log('filtered',filtered)
+
+      searchArticle({
+        query: data
+      })
+  }
+
   return <Card
       loading={isLoading}
       extra={<Space>
@@ -79,6 +115,26 @@ export const CategoryArticles = () => {
         />
       </Space>}
   >
+    <AutoComplete
+        style={{
+          width: "100%"
+        }}
+        options={searchOptions}
+        allowClear={true}
+        onChange={(data, option)=>{
+          console.log(option)
+        }}
+        onSearch={onSearch}
+        onSelect={(data, option)=>{
+          // console.log(data)
+          navigate(`/content/articles/${data}`)
+        }}
+        onClear={(data)=>{
+
+        }}
+    >
+      <Input prefix={<SearchOutlined />} placeholder="search article" />
+    </AutoComplete>
     <Table pagination={false} columns={columns} dataSource={articles} />
     <Pagination
         total={data?.meta.total}

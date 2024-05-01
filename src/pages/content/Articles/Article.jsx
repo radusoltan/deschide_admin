@@ -1,40 +1,37 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useGetArticleQuery, useUpdateArticleMutation} from "../../../services/articles";
 import i18n from "../../../i18n";
-import {useEffect, useState} from "react";
 import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch, Typography} from "antd";
-import {CKEditor} from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {ArticleEditor} from "../../../components/article/Editor";
 import {ArticleImages} from "../../../components/article/ArticleImages";
 import {FeaturedLists} from "../../../components/article/FeaturedLists";
+import {unlockArticle} from "../../../features/articleSlice";
 
 export const Article = ()=>{
   const [form] = Form.useForm();
   const {article} = useParams()
-  const {data, isSuccess, isLoading} = useGetArticleQuery({article, locale: i18n.language})
+  const {data, isLoading} = useGetArticleQuery({article, locale: i18n.language})
   const [updateArticle] = useUpdateArticleMutation()
-  const [articleData, setArticleData] = useState()
+
   const { Item } = Form;
-  const { TextArea } = Input;
-  const { Title } = Typography;
+
+  const navigate = useNavigate();
+
+  const close = ()=>{
+    unlockArticle(data?.data.id)
+    navigate(`/content/categories/${data?.data.category_id}`)
+  }
 
 
   const onFinish = () => {
-
     form.validateFields()
         .then(values=>{
-
           updateArticle({
             article,
             body:
                 {...values},
             locale: i18n.language})
-
-
-          console.log(values)
         })
   }
 
@@ -54,12 +51,17 @@ export const Article = ()=>{
         is_alert: data?.data.is_alert,
       }}
     >
-      <Space direction="vertical">
-        <Item>
-          <Button htmlType="submit" type="primary">
+      <Space direction="horizontal" style={{
+        marginBottom: 20
+      }}>
+        <Item style={{
+          margin: 0
+        }}>
+          <Button htmlType="submit" type="success">
             Submit
           </Button>
         </Item>
+         <Button type="primary" danger onClick={close}>Close</Button>
       </Space>
       <Item
           name="title"
@@ -82,7 +84,6 @@ export const Article = ()=>{
                   })
                 }}
                 initialValue={data?.data.lead}
-                field="lead"
             />
           </Item>
           <Divider orientation="vertical" />
@@ -136,8 +137,6 @@ export const Article = ()=>{
           <ArticleImages article={article} />
         </Col>
       </Row>
-
-
     </Form>
   </Card>
 }
