@@ -85,6 +85,17 @@ export const articles = createApi({
         body: {locale: i18n.language}
       })
     }),
+    searchArticles: build.mutation({
+      query: ({query}) => ({
+        url: `/articles/search`,
+        method: "POST",
+        body: {query, locale: i18n.language}
+      }),
+      invalidatesTags: result => [
+          ...result.data.map(article=>({ type: "Articles", id: article.id })),
+          { type: "Articles", id: "PARTIAL-LIST" },
+      ]
+    }),
 
     getAuthors: build.query({
       query: ({page, locale})=>`/authors?page=${page}&locale=${locale}`,
@@ -185,6 +196,7 @@ export const articles = createApi({
     }),
 
 
+
   })
 })
 
@@ -195,6 +207,7 @@ export const {
   useAddCategoryArticleMutation,
   useUpdateArticleMutation,
   useUnlockArticleMutation,
+  useSearchArticlesMutation,
 
 
 
