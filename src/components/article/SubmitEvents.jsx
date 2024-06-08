@@ -1,10 +1,9 @@
 import {Button, Card, DatePicker, Space} from "antd"
 import moment from "moment"
-import {CheckCircleOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {useDeleteArticlePublishTimeMutation, useSetArticlePublishTimeMutation} from "../../services/articles";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 export const SubmitEvents = ({ article, publish_at }) =>{
 
