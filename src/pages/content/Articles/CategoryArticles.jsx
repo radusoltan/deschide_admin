@@ -66,6 +66,9 @@ export const CategoryArticles = () => {
     title: article.title ?? 'No translation',
     status: article.status,
     is_locked: article.is_locked,
+    visits: article.visits,
+    created_at: article.created_at,
+    updated_at: article.updated_at,
   }))
 
   const columns = [
@@ -85,6 +88,24 @@ export const CategoryArticles = () => {
       render: (text, {key, is_locked}) => is_locked ? <Button icon={<FontAwesomeIcon icon={faLockOpen} onClick={()=>{
         unlockArticle(key)
       }} />} /> : (text)
+    },
+    {
+      title: "Visits",
+      dataIndex: "visits",
+      key: "visits",
+      render: (text, {key, is_locked}) => <span>{text}</span>
+    },
+    {
+      title: "Created",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (text, {key, is_locked}) => text
+    },
+    {
+      title: "Updated",
+      dataIndex: "updated_at",
+      key: "updated_at",
+      render: (text, {key, is_locked}) => text
     }
   ]
 

@@ -8,12 +8,15 @@ import {ArticleImages} from "../../../components/article/ArticleImages";
 import {FeaturedLists} from "../../../components/article/FeaturedLists";
 import {unlockArticle} from "../../../features/articleSlice";
 import {ArticleAuthors} from "../../../components/article/ArticleAuthors";
+import {SubmitEvents} from "../../../components/article/SubmitEvents";
+import {useGetAllCategoriesQuery} from "../../../services/categories";
 
 export const Article = ()=>{
   const [form] = Form.useForm();
   const {article} = useParams()
   const {data, isLoading} = useGetArticleQuery({article, locale: i18n.language})
   const [updateArticle] = useUpdateArticleMutation()
+  const {data: categories, isLoading: categoriesLoading} = useGetAllCategoriesQuery(i18n.language)
 
   const { Item } = Form;
 
@@ -23,7 +26,6 @@ export const Article = ()=>{
     unlockArticle(data?.data.id)
     navigate(`/content/categories/${data?.data.category_id}`)
   }
-
 
   const onFinish = () => {
     form.validateFields()
@@ -37,7 +39,7 @@ export const Article = ()=>{
   }
 
   return <Card
-      loading={isLoading}
+      loading={isLoading || categoriesLoading}
   >
     <Form
       form={form}
@@ -52,6 +54,7 @@ export const Article = ()=>{
         is_alert: data?.data.is_alert,
         is_live: data?.data.is_live,
         embed: data?.data.embed,
+        category_id: data?.data.category_id,
       }}
     >
       <Space direction="horizontal" style={{
@@ -116,6 +119,16 @@ export const Article = ()=>{
         </Col>
         <Col span={6}>
           <Card>
+            <h3>Category</h3>
+            <Item name="category_id">
+              <Select
+                  options={categories?.data.map(category=>({
+                    label: category.title,
+                    value: category.id,
+                  }))}
+              />
+            </Item>
+            <Divider />
             <Item
                 name="status"
             >
@@ -125,6 +138,9 @@ export const Article = ()=>{
                 <Select.Option value="P">Published</Select.Option>
               </Select>
             </Item>
+            {
+              data?.data.status === "S" && <SubmitEvents article={article} publish_at={data?.data.publish_at}/>
+            }
             <Divider />
             <Item
                 name="is_flash"

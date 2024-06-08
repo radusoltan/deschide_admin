@@ -22,6 +22,9 @@ export const categories = createApi({
         { type: "Categories", id: "PARTIAL-LIST" }
       ]
     }),
+    getAllCategories: build.query({
+      query: (locale) => `/categories?locale=${locale}&all=true`,
+    }),
     getCategory: build.query({
       query: ({category, locale}) => `/categories/${category}?locale=${locale}`,
     }),
@@ -56,5 +59,7 @@ export const {
   useGetCategoryQuery,
   useAddCategoryMutation,
   useUpdateCategoryMutation,
-  useDeleteCategoryMutation
+  useDeleteCategoryMutation,
+
+    useGetAllCategoriesQuery
 } = categories
