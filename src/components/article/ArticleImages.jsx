@@ -5,15 +5,19 @@ import {
   useSetArticleMainImageMutation
 } from "../../services/images";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCrop, faTrashCan, faUpload} from "@fortawesome/free-solid-svg-icons";
+import {faCrop, faPenToSquare, faTrashCan, faUpload} from "@fortawesome/free-solid-svg-icons";
 import {Uploader} from "../images/Uploader";
 import {useState} from "react";
 import {Cropper} from "../images/Cropper";
+import {EditImageCreds} from "./EditImageCreds";
 
 export const ArticleImages = ({article}) => {
   const [isUpload, setIsUpload] = useState(false)
   const [isCrop, setIsCrop] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
   const {data, isLoading} = useGetImagesByArticleQuery(article)
+
+  const [selectedImage, setSelectedImage] = useState(null)
 
   const [detachArticleImage] = useDetachArticleImageMutation()
   const [setArticleMainImage] = useSetArticleMainImageMutation()
@@ -53,6 +57,14 @@ export const ArticleImages = ({article}) => {
                   onClick={()=>setIsCrop(true)}
               />
           }
+          <Button
+              type="warning"
+              icon={<FontAwesomeIcon icon={faPenToSquare} />}
+              onClick={()=>{
+                setSelectedImage(image)
+                setIsEdit(true)
+              }}
+          />
         </Space>
       </Card>
     </Col>
@@ -85,6 +97,20 @@ export const ArticleImages = ({article}) => {
             onCancel={()=>setIsCrop(false)}
           />
 
+    }
+    {
+      isEdit && <EditImageCreds
+            open={isEdit}
+            image={selectedImage}
+            onOk={()=>{
+              setSelectedImage(null)
+              setIsEdit(false)
+            }}
+            onCancel={()=>{
+              setSelectedImage(null)
+              setIsEdit(false)
+            }}
+        />
     }
   </Card>)
 }

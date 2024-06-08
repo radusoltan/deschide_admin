@@ -7,6 +7,7 @@ import {ArticleEditor} from "../../../components/article/Editor";
 import {ArticleImages} from "../../../components/article/ArticleImages";
 import {FeaturedLists} from "../../../components/article/FeaturedLists";
 import {unlockArticle} from "../../../features/articleSlice";
+import {ArticleAuthors} from "../../../components/article/ArticleAuthors";
 
 export const Article = ()=>{
   const [form] = Form.useForm();
@@ -49,6 +50,8 @@ export const Article = ()=>{
         is_flash: data?.data.is_flash,
         is_breaking: data?.data.is_breaking,
         is_alert: data?.data.is_alert,
+        is_live: data?.data.is_live,
+        embed: data?.data.embed,
       }}
     >
       <Space direction="horizontal" style={{
@@ -70,6 +73,7 @@ export const Article = ()=>{
           showCount={true}
           size="large"
       /></Item>
+
       <Row>
         <Col span={18}>
           <Item
@@ -102,6 +106,13 @@ export const Article = ()=>{
             />
           </Item>
           <FeaturedLists article={article}/>
+          <ArticleAuthors article={article} />
+          <Item name="is_live" label="Live article">
+            <Switch />
+          </Item>
+          <Item name="embed" label="Embed Code">
+            <Input.TextArea />
+          </Item>
         </Col>
         <Col span={6}>
           <Card>
