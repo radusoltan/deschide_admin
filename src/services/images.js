@@ -111,7 +111,13 @@ export const images = createApi({
     }),
 
 
-
+    updateImage: build.mutation({
+      query: ({image, body}) => ({
+        url: `/images/${image}`,
+        method: "PATCH",
+        body
+      })
+    }),
 
 
 
@@ -144,6 +150,8 @@ export const {
   useUploadArticleImagesMutation,
   useDetachArticleImageMutation,
   useSetArticleMainImageMutation,
+
+  useUpdateImageMutation,
 
   useGetRenditionsQuery,
   useGetAllRenditionsQuery,
