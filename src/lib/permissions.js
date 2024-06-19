@@ -1,4 +1,3 @@
-import {MailOutlined} from "@ant-design/icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAddressBook, faGears,
@@ -25,6 +24,9 @@ export const getUserMenu = permissions => {
       names.includes('user-list') && getItem('Users','/management/users', <FontAwesomeIcon icon={faPeopleGroup} />),
       names.includes('role-list') && getItem('Roles','/management/roles', <FontAwesomeIcon icon={faAddressBook} />),
       names.includes('list-list') && getItem('Permissions','/management/permissions', <FontAwesomeIcon icon={faHandSparkles} />),
+    ]),
+    getItem('Media','/media',<>ICON</>,[
+        getItem('Images','/media/images')
     ]),
     getItem('Settings', '/settings',<FontAwesomeIcon icon={faGears} />,[
         getItem('Renditions','/settings/renditions',<FontAwesomeIcon icon={faImages} />,)

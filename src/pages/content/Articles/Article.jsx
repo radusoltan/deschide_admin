@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useGetArticleQuery, useUpdateArticleMutation} from "../../../services/articles";
 import i18n from "../../../i18n";
-import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch, Typography} from "antd";
+import {Button, Card, Col, Divider, Form, Input, notification, Row, Select, Space, Switch} from "antd";
 import 'react-quill/dist/quill.snow.css';
 import {ArticleEditor} from "../../../components/article/Editor";
 import {ArticleImages} from "../../../components/article/ArticleImages";
@@ -10,12 +10,13 @@ import {unlockArticle} from "../../../features/articleSlice";
 import {ArticleAuthors} from "../../../components/article/ArticleAuthors";
 import {SubmitEvents} from "../../../components/article/SubmitEvents";
 import {useGetAllCategoriesQuery} from "../../../services/categories";
+import ReactQuill from "react-quill";
 
 export const Article = ()=>{
   const [form] = Form.useForm();
   const {article} = useParams()
   const {data, isLoading} = useGetArticleQuery({article, locale: i18n.language})
-  const [updateArticle] = useUpdateArticleMutation()
+  const [updateArticle, {isSuccess: updateSuccess}] = useUpdateArticleMutation()
   const {data: categories, isLoading: categoriesLoading} = useGetAllCategoriesQuery(i18n.language)
 
   const { Item } = Form;
@@ -38,6 +39,13 @@ export const Article = ()=>{
         })
   }
 
+  if (updateSuccess) notification.success({
+    message: "Articol salvat!!!"
+  })
+  const options = data?.data.keywords?.map((keyword)=>({
+    value: keyword,
+    label: keyword,
+  }))
   return <Card
       loading={isLoading || categoriesLoading}
   >
@@ -55,6 +63,9 @@ export const Article = ()=>{
         is_live: data?.data.is_live,
         embed: data?.data.embed,
         category_id: data?.data.category_id,
+        telegram_post: data?.data.telegram_post,
+        telegram_embed: data?.data.telegram_embed,
+        keywords: data?.data.keywords,
       }}
     >
       <Space direction="horizontal" style={{
@@ -108,12 +119,33 @@ export const Article = ()=>{
                 initialValue={data?.data.body}
             />
           </Item>
+          <Item
+              name="keywords"
+              label="Keywords"
+          >
+           <Select
+               mode="tags"
+               options={options}
+           />
+          </Item>
           <FeaturedLists article={article}/>
           <ArticleAuthors article={article} />
           <Item name="is_live" label="Live article">
             <Switch />
           </Item>
           <Item name="embed" label="Embed Code">
+            <Input.TextArea />
+          </Item>
+          <Item
+              name="telegram_post"
+              label="Telegram"
+          >
+            <ReactQuill />
+          </Item>
+          <Item
+              name="telegram_embed"
+              label="Telegram Embed"
+          >
             <Input.TextArea />
           </Item>
         </Col>

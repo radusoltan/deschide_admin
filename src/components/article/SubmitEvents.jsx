@@ -15,8 +15,6 @@ export const SubmitEvents = ({ article, publish_at }) =>{
   const [publishTime, setPublishTime] = useState()
   const date = moment(publish_at)
 
-  console.log(date)
-
 
   return <Card title="Select publish time" style={{
     marginTop: 25
