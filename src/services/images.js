@@ -15,6 +15,23 @@ export const images = createApi({
   }),
   tagTypes: ["Images", "Thumbnails", "Renditions"],
   endpoints: build => ({
+    getImages: build.query({
+      query: page => `/images?page=${page}`,
+      providesTags: result => [
+          ...result.data.map(image =>({
+            type: "Images", id: image.id,
+          })),
+        { type: "Images", id: "PARTIAL-LIST" },
+      ],
+    }),
+    getImage: build.query({
+      query: image => `/images/${image}`,
+      providesTags: result => [
+        {type: "Images", id: result.data.id},
+      ]
+    }),
+
+
     getImagesByArticle: build.query({
       query: article => `/article/${article}/images`,
       providesTags: result => [
@@ -30,6 +47,17 @@ export const images = createApi({
       }),
       invalidatesTags: result => [
         ...result.data.map(image=>({ type: "Image", id: image.id })),
+        { type: "Images", id: "LIST" }
+      ]
+    }),
+    attachImagesToArticle: build.mutation({
+      query: ({body, article})=>({
+        url: `/article/${article}/images-attach`,
+        method: "POST",
+        body
+      }),
+      invalidatesTags: result => [
+          ...result.data.map(image=>({ type: "Image", id: image.id })),
         { type: "Images", id: "LIST" }
       ]
     }),
@@ -146,9 +174,14 @@ export const images = createApi({
 })
 
 export const {
+
+  useGetImagesQuery,
+    useGetImageQuery,
+
   useGetImagesByArticleQuery,
   useUploadArticleImagesMutation,
   useDetachArticleImageMutation,
+  useAttachImagesToArticleMutation,
   useSetArticleMainImageMutation,
 
   useUpdateImageMutation,

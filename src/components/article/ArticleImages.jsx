@@ -1,18 +1,20 @@
-import {Button, Card, Col, Divider, Image, Modal, Radio, Space} from "antd";
+import {Button, Card, Col, Divider, Image, Radio, Space} from "antd";
 import {
   useDetachArticleImageMutation,
   useGetImagesByArticleQuery,
   useSetArticleMainImageMutation
 } from "../../services/images";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCrop, faPenToSquare, faTrashCan, faUpload} from "@fortawesome/free-solid-svg-icons";
+import {faCrop, faList, faPenToSquare, faTrashCan, faUpload} from "@fortawesome/free-solid-svg-icons";
 import {Uploader} from "../images/Uploader";
 import {useState} from "react";
 import {Cropper} from "../images/Cropper";
 import {EditImageCreds} from "./EditImageCreds";
+import {ImagesList} from "./ImageList";
 
 export const ArticleImages = ({article}) => {
   const [isUpload, setIsUpload] = useState(false)
+  const [isList, setIsList] = useState(false)
   const [isCrop, setIsCrop] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const {data, isLoading} = useGetImagesByArticleQuery(article)
@@ -79,6 +81,11 @@ export const ArticleImages = ({article}) => {
             icon={<FontAwesomeIcon icon={faUpload} />}
             onClick={()=>setIsUpload(true)}
         />
+        <Button
+            type="primary"
+            icon={<FontAwesomeIcon icon={faList} />}
+            onClick={()=>setIsList(true)}
+        />
       </Space>}
   >
     {images}
@@ -111,6 +118,9 @@ export const ArticleImages = ({article}) => {
               setIsEdit(false)
             }}
         />
+    }
+    {
+      isList && <ImagesList article={article} open={isList} onOk={()=>setIsList(false)} onCancel={()=>setIsList(false)} />
     }
   </Card>)
 }

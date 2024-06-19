@@ -22,6 +22,8 @@ import {TranslateAuthor} from "./components/authors/TranslateAuthor";
 import {EditList} from "./components/lists/EditList";
 import {Renditions} from "./pages/settings/Renditions";
 import {EditRendition} from "./components/renditions/EditRendition";
+import {MediaLibrary} from "./pages/media";
+import {MediaItem} from "./pages/media/MediaItem";
 
 export const router = createBrowserRouter([
   {
@@ -120,6 +122,15 @@ export const router = createBrowserRouter([
       {
         path: '/management/permissions',
         element: <Permissions />
+      },
+
+      {
+        path: '/media/images',
+        element: <MediaLibrary />
+      },
+      {
+        path: '/media/images/:image',
+        element: <MediaItem />
       },
 
       {

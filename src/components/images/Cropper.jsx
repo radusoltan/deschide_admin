@@ -1,6 +1,6 @@
-import {Card, Modal, Image, Row, Col} from "antd";
-import {useRef, useState} from "react";
-import {useCropImageMutation, useGetAllRenditionsQuery, useGetImageThumbnailsQuery} from "../../services/images";
+import {Card, Modal, Image, Row, Col, notification} from "antd";
+import {useEffect, useRef, useState} from "react";
+import {useCropImageMutation, useGetAllRenditionsQuery} from "../../services/images";
 import {ReactCrop} from "react-image-crop";
 import 'react-image-crop/dist/ReactCrop.css'
 import {canvasPreview, centerAspectCrop, useDebounceEffect} from "../../lib/helpers";
@@ -13,7 +13,7 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
   const [crop, setCrop] = useState(null)
   const [rendition, setRendition] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
-  const [cropImage] = useCropImageMutation()
+  const [cropImage, {isSuccess}] = useCropImageMutation()
   const {
     data: renditionsData,
     isLoading: renditionsIsLoading,
@@ -42,7 +42,6 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
   }
 
   const saveCrop = ()=>{
-    console.log("save crop",thumbnail)
     cropImage({
       image: image.id,
       rendition: rendition,
@@ -105,6 +104,14 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
         }
       }, 100, [crop]
   )
+
+  useEffect(() => {
+    if (isSuccess){
+      notification.success({
+        message: "Salvat"
+      })
+    }
+  }, [isSuccess]);
 
   return <Modal
       open={open}
