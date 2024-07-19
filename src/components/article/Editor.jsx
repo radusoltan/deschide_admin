@@ -8,13 +8,11 @@ export const ArticleEditor = ({field, initialValue, onEdit, images})=> {
       onEdit(editorRef.current.getContent());
     }
   };
-  // ,
-  //             'h2[class="text-xl leading-normal mb-2 font-semibold text-gray-800 dark:text-gray-100"]',
-  //             'ul[class="pl-8 mb-4"]',
-  //             'blockquote[class="relative p-4 border-l-4 border-red-700 bg-gray-100 dark:bg-gray-900 dark:bg-opacity-40 mb-4 text-xl"]'
+
+
   return <>
     <Editor
-        tinymceScriptSrc={'http://localhost:3000' + '/tinymce/tinymce.min.js'}
+        tinymceScriptSrc={process.env.REACT_APP_URL_EDITOR + '/tinymce/tinymce.min.js'}
         onInit={(evt, editor) => editorRef.current = editor}
         initialValue={initialValue}
         onEditorChange={({newValue, editor})=>{
@@ -39,7 +37,7 @@ export const ArticleEditor = ({field, initialValue, onEdit, images})=> {
               'bold italic forecolor | alignleft aligncenter ' +
               'alignright alignjustify | bullist numlist outdent indent | ' +
               'removeformat | help |'+
-              'image | code',
+              'image | code | blockquote',
           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
         }}
 
