@@ -39,6 +39,17 @@ export const images = createApi({
         { type: "Images", id: "LIST" },
       ]
     }),
+    uploadImage: build.mutation({
+      query: (body) => ({
+        url: `images`,
+        method: "POST",
+        body
+      }),
+      invalidatesTags: response => [
+        { type: "Images", id: response.data.id },
+        { type: "Images", id: "PARTIAL-LIST" },
+      ]
+    }),
     uploadArticleImages: build.mutation({
       query: ({article, body}) => ({
         url: `/article/${article}/images`,
@@ -177,6 +188,7 @@ export const {
 
   useGetImagesQuery,
     useGetImageQuery,
+    useUploadImageMutation,
 
   useGetImagesByArticleQuery,
   useUploadArticleImagesMutation,

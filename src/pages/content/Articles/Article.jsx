@@ -61,6 +61,7 @@ export const Article = ()=>{
         is_breaking: data?.data.is_breaking,
         is_alert: data?.data.is_alert,
         is_live: data?.data.is_live,
+        is_video: data?.data.is_video,
         embed: data?.data.embed,
         category_id: data?.data.category_id,
         telegram_post: data?.data.telegram_post,
@@ -190,6 +191,10 @@ export const Article = ()=>{
                 name="is_alert"
                 label="ALERT"
             >
+              <Switch />
+            </Item>
+            <Divider />
+            <Item name="is_video" label="Video">
               <Switch />
             </Item>
           </Card>

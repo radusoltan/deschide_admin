@@ -14,16 +14,14 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
   const [rendition, setRendition] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
   const [cropImage, {isSuccess}] = useCropImageMutation()
+
+  console.log(image)
+
   const {
     data: renditionsData,
     isLoading: renditionsIsLoading,
     isSuccess: renditionsIsSuccess
   } = useGetAllRenditionsQuery()
-
-
-
-
-
 
   const selectRendition = id => {
     const rend = renditionsData.data.find((r) => r.id === id)
@@ -60,7 +58,7 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
     setRendition(null)
   }
 
-  const thumbnails = image.thumbnails.map(thumbnail=>(
+  const thumbnails = image?.thumbnails.map(thumbnail=>(
       <Card
           key={thumbnail.id}
           cover={
@@ -82,7 +80,7 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
           }}
       >
         <Card.Meta
-            title={renditionsData?.data.find(r=>r.id === thumbnail.rendition_id).name}
+            title={renditionsData?.data.find(r=>r.id === thumbnail.rendition_id)?.name}
         />
       </Card>
   ))
@@ -123,7 +121,7 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
         clearState()
         onCancel()
       }}
-      width={'90%'}
+      width={'70%'}
   >
     <Card>
       <Row>
