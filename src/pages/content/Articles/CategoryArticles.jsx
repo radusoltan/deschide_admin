@@ -14,6 +14,7 @@ import {SearchOutlined} from "@ant-design/icons";
 export const CategoryArticles = () => {
 
   const [isNew, setIsNew] = useState(false)
+  const [isTranslate, setIsTranslate] = useState(false)
   const {category} = useParams()
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
@@ -106,6 +107,12 @@ export const CategoryArticles = () => {
       dataIndex: "updated_at",
       key: "updated_at",
       render: (text, {key, is_locked}) => text
+    },
+    {
+      render: (text, {key})=><Button
+          type="info"
+          onClick={()=>navigate(`/content/articles/${key}/translate`)}
+      >Translate</Button>
     }
   ]
 

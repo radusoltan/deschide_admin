@@ -15,8 +15,6 @@ export const Cropper = ({open, image, onOk, onCancel})=>{
   const [thumbnail, setThumbnail] = useState(null)
   const [cropImage, {isSuccess}] = useCropImageMutation()
 
-  console.log(image)
-
   const {
     data: renditionsData,
     isLoading: renditionsIsLoading,
