@@ -27,9 +27,14 @@ export const MediaItemCropper = ({rendition, image}) => {
 
   useEffect(() => {
 
-    setCrop(
-        thumbnail ? JSON.parse(thumbnail.coords).p : defaultCrop
-    )
+    if (thumbnail.crop === null){
+      setCrop(defaultCrop)
+    }
+
+
+    // setCrop(
+    //     thumbnail ? JSON.parse(thumbnail.coords).p : defaultCrop
+    // )
   }, []);
 
   return <Col span={12} key={rendition?.id}>

@@ -1,6 +1,6 @@
 import {useDeleteCategoryMutation, useGetCategoriesQuery} from "../../../services/categories";
 import {Button, Card, Pagination, Space, Switch, Table} from "antd";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import i18n from "../../../i18n";
 import {Link, useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

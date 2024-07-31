@@ -37,7 +37,7 @@ export const ArticleEditor = ({field, initialValue, onEdit, images})=> {
               'bold italic forecolor | alignleft aligncenter ' +
               'alignright alignjustify | bullist numlist outdent indent | ' +
               'removeformat | help |'+
-              'image | code | blockquote',
+              'image | code | blockquote | link',
           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
         }}
 

@@ -80,6 +80,7 @@ export const Article = ()=>{
           </Button>
         </Item>
          <Button type="primary" danger onClick={close}>Close</Button>
+        <Button type="info" onClick={()=>navigate(`/content/articles/${data?.data.id}/translate`)}>Translate</Button>
       </Space>
       <Item
           name="title"

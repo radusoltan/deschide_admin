@@ -24,6 +24,7 @@ import {Renditions} from "./pages/settings/Renditions";
 import {EditRendition} from "./components/renditions/EditRendition";
 import {MediaLibrary} from "./pages/media";
 import {MediaItem} from "./pages/media/MediaItem";
+import {TranslateArticle} from "./components/article/TranslateArticle";
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: '/content/articles/:article',
         element: <Article />
+      },
+      {
+        path: 'content/articles/:article/translate',
+        element: <TranslateArticle />
       },
 
 
