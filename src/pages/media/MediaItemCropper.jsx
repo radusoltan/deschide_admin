@@ -21,7 +21,7 @@ export const MediaItemCropper = ({rendition, image}) => {
 
 
 
-  const [cropImage] = useCropImageMutation()
+  const [cropImage,{isSuccess, data: cropData}] = useCropImageMutation()
 
   const [crop, setCrop] = useState(null)
 
@@ -31,11 +31,12 @@ export const MediaItemCropper = ({rendition, image}) => {
       setCrop(defaultCrop)
     }
 
+    setCrop(JSON.parse(thumbnail.coords).p)
 
-    // setCrop(
-    //     thumbnail ? JSON.parse(thumbnail.coords).p : defaultCrop
-    // )
-  }, []);
+    if(isSuccess){
+      setCrop(JSON.parse(cropData.data.coords).p)
+    }
+  }, [isSuccess]);
 
   return <Col span={12} key={rendition?.id}>
     <h1>{rendition.name}</h1>

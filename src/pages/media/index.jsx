@@ -1,4 +1,4 @@
-import {Button, Card, Image, Modal, Table, Upload} from "antd";
+import {Button, Card, Image, Modal, Table, Upload, Pagination} from "antd";
 import {useGetImagesQuery, useUploadImageMutation} from "../../services/images";
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
@@ -7,8 +7,8 @@ import {faInbox} from "@fortawesome/free-solid-svg-icons";
 const { Dragger } = Upload;
 
 export const MediaLibrary = ()=>{
-
-  const {data, isError, isSuccess, error } = useGetImagesQuery(1)
+  const [page, setPage] = useState(1)
+  const {data, isError, isSuccess, error } = useGetImagesQuery(page)
   const [images, setImages] = useState([])
   const [isUpload, setIsUpload] = useState(false)
   const [imageList, setImageList] = useState([])
@@ -31,7 +31,9 @@ export const MediaLibrary = ()=>{
 
   useEffect(() => {
     if (isSuccess){
+      console.log('SS',data.meta.current_page)
       setImages(data.data)
+      // setPage(data.meta.current_page)
     }
     if (isError){
       console.dir(error)
@@ -39,7 +41,7 @@ export const MediaLibrary = ()=>{
     if (uploadSuccess){
       setIsUpload(false)
     }
-  }, [isSuccess, uploadSuccess]);
+  }, [isSuccess, uploadSuccess, page]);
 
   const columns = [
     {
@@ -49,9 +51,9 @@ export const MediaLibrary = ()=>{
       render: (text, {key}) => <Link to={`/media/images/${key}`}>{text}</Link>
     },
     {
-      render: (text, {name, path}) => <figure>
+      render: (text, {name, path, description}) => <figure>
         <Image src={path} alt={name} preview={false} width={100}/>
-        <figcaption>Fig.1 - Trulli, Puglia, Italy.</figcaption>
+        <figcaption>{description}</figcaption>
       </figure>
     }
   ]
@@ -65,7 +67,12 @@ export const MediaLibrary = ()=>{
       description: image.description,
       path: process.env.REACT_APP_URL + image.path  + image.name,
       name: image.name,
-    }))} />
+    }))} pagination={false} />
+    <Pagination
+        total={data?.meta.total}
+        defaultCurrent={data?.meta.current_page}
+        onChange={page=>setPage(page)}
+    />
     <Modal
         open={isUpload}
         onOk={()=>{

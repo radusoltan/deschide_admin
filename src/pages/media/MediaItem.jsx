@@ -1,6 +1,11 @@
 import {Button, Card, Col, Form, Input, Row} from "antd";
 import {useParams} from "react-router-dom";
-import {useGetImageQuery, useGetRenditionsQuery, useUpdateImageMutation} from "../../services/images";
+import {
+  useGetAllRenditionsQuery,
+  useGetImageQuery,
+  useGetRenditionsQuery,
+  useUpdateImageMutation
+} from "../../services/images";
 import {MediaItemCropper} from "./MediaItemCropper";
 
 export const MediaItem = () => {
@@ -8,7 +13,7 @@ export const MediaItem = () => {
   const {image} = useParams()
 
   const {data, isLoading} = useGetImageQuery(image)
-  const {data:renditions} = useGetRenditionsQuery()
+  const {data:renditions} = useGetAllRenditionsQuery()
   const [updateImage] = useUpdateImageMutation()
 
   const imageData = data?.data
